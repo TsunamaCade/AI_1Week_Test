@@ -49,12 +49,9 @@ public class ShootGun : MonoBehaviour
                     foreach(GameObject ai in nonHostiles)
                     {
                         ai.GetComponent<NonHostile>().StopAndMoveToClosestExit();
-                        Debug.Log("Fleeing");
                     }
                     
                     //Take health away from target
-                    Debug.DrawRay(gun.position, transform.forward * 10f, Color.green, Mathf.Infinity);
-                    Debug.Log(hit.transform);
                     if(hit.transform.GetComponent<TakeDamage>() != null)
                     {
                         hit.transform.GetComponent<TakeDamage>().health -= 1f;
@@ -74,6 +71,5 @@ public class ShootGun : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         canShoot = true;
-        Debug.Log("Can Shoot");
     }
 }

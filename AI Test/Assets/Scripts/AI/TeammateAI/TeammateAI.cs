@@ -6,19 +6,26 @@ using UnityEngine.AI;
 public class TeammateAI : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent nma;
+
     [SerializeField] private Transform groupLeader;
-    [SerializeField] private bool isPlayerDirecting;
-    [SerializeField] private bool hasPlayerDirected;
+
     [SerializeField] private bool takingDamage;
-    [SerializeField] private GameObject weapon;
+
     [SerializeField] private Transform retreatLocation;
+
     [SerializeField] private Transform followLocation;
     [SerializeField] private Transform altFollowLocation;
+    
     [SerializeField] private float rotationSpeed;
+
     [SerializeField] private Transform direction;
+
     [SerializeField] private Transform point;
+
     private Quaternion targetRotation;
+
     public bool inWay;
+
     [SerializeField] private LayerMask friendlyMask;
 
 
@@ -34,21 +41,7 @@ public class TeammateAI : MonoBehaviour
             FaceDirection();
         }
 
-        if(groupLeader.transform.GetComponent<ShootGun>() == null)
-        {
-            return;
-        }
-        else
-        {
-            EquiptWeapon();
-        }
-
-
-        if (isPlayerDirecting)
-        {
-            WaitForCommand();
-        }
-        else if (takingDamage)
+        if (takingDamage)
         {
             Retreat();
         }
@@ -76,39 +69,37 @@ public class TeammateAI : MonoBehaviour
         }
     }
 
-    void EquiptWeapon()
-    {
-        weapon.SetActive(true);
-    }
-
     void Follow()
     {
+        //Set to follow the leader when they move out of range
         direction = groupLeader;
         nma.SetDestination(followLocation.position);
     }
 
     void WaitForCommand()
     {
-        
+        //Player is able to direct the AI using a waypoint system, and can attack certain enemies, take cover, or simply relocate based on the player's crosshair
     }
 
     void Attack()
     {
-        
+        //Attack enemies
     }
 
     void Retreat()
     {
-        
+        //If the AI took too much damage, it would find a suitable location to flee to to recover health
     }
 
     void Guard()
     {
+        //Look towards certain direction, updates in live gameplay
         direction = point;
     }
 
     void MoveSpot()
     {
+        //If AI comes into contact of Player or Teammate crosshair
         if(nma.destination == (followLocation.position))
         {
             nma.SetDestination(altFollowLocation.position);
@@ -125,6 +116,7 @@ public class TeammateAI : MonoBehaviour
 
     void FaceDirection()
     {
+        //Face set direction to nigate Navmesh being weird about included code for facing directions
         if(direction != null)
         {
             Vector3 dir = direction.position - transform.position;

@@ -21,6 +21,8 @@ public class Hostile : MonoBehaviour
     [SerializeField] private Transform playerGun;
 
     [SerializeField] private GameObject weapon;
+    [SerializeField] private float bulletSpread;
+    [SerializeField] private float bulletRange;
     
 
     public bool isInView;
@@ -54,13 +56,11 @@ public class Hostile : MonoBehaviour
         Vector3 dodgeDirection;
         if (crossProduct.y > 0)
         {
-            Debug.Log("dodge Right");
             // Dodge to the right
             dodgeDirection = -transform.right;
         }
         else
         {
-            Debug.Log("dodge Left");
             // Dodge to the left
             dodgeDirection = transform.right;
         }
@@ -80,6 +80,7 @@ public class Hostile : MonoBehaviour
 
     void Attack()
     {
+        //Move in range of player and fire gun
         nma.SetDestination(player.position);
         weapon.SetActive(true);
         if(nma.remainingDistance <= nma.stoppingDistance)
@@ -88,6 +89,21 @@ public class Hostile : MonoBehaviour
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             Vector3 rotation = lookRotation.eulerAngles;
             transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+            Shoot();
+        }
+    }
+
+    void Shoot()
+    {
+        //If bullet hits, friendly takes damage
+        RaycastHit hit;
+        Vector3 dir = transform.forward + new Vector3(Random.Range(-bulletSpread, bulletSpread), Random.Range(-bulletSpread, bulletSpread), Random.Range(-bulletSpread, bulletSpread));
+        if(Physics.Raycast(transform.position, dir, out hit, bulletRange))
+        {
+            if(hit.transform.CompareTag("Ally"))
+            {
+                hit.transform.GetComponent<TakeDamage>().health -= 1f;
+            }
         }
     }
 

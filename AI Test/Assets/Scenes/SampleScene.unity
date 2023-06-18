@@ -957,6 +957,8 @@ MonoBehaviour:
   player: {fileID: 999869273}
   playerGun: {fileID: 604631734}
   weapon: {fileID: 706675156}
+  bulletSpread: 0
+  bulletRange: 0
   isInView: 0
 --- !u!195 &265971604
 NavMeshAgent:
@@ -2901,10 +2903,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nma: {fileID: 983529863}
   groupLeader: {fileID: 999869273}
-  isPlayerDirecting: 0
-  hasPlayerDirected: 0
   takingDamage: 0
-  weapon: {fileID: 998541175}
   retreatLocation: {fileID: 0}
   followLocation: {fileID: 96022984}
   altFollowLocation: {fileID: 1633514743}
@@ -3191,7 +3190,7 @@ GameObject:
   - component: {fileID: 999869274}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Ally
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3314,10 +3313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nma: {fileID: 1032913145}
   groupLeader: {fileID: 999869273}
-  isPlayerDirecting: 0
-  hasPlayerDirected: 0
   takingDamage: 0
-  weapon: {fileID: 1104066880}
   retreatLocation: {fileID: 0}
   followLocation: {fileID: 1393198804}
   altFollowLocation: {fileID: 1358076651}

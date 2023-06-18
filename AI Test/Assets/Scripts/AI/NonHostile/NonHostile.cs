@@ -104,6 +104,7 @@ public class NonHostile : MonoBehaviour
     
     public void StopAndMoveToClosestExit()
     {
+        //Stop everything it's doing, and find a suitable exit
         isWandering = false;
         isPathing = false;
         nma.ResetPath();
