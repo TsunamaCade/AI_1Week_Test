@@ -15,7 +15,12 @@ public class NonHostile : MonoBehaviour
     [SerializeField] private Transform[] pathPoints;
     private int currentWaypointIndex = 0;
 
-    [SerializeField] private bool isFleeing = false;
+    public bool isFleeing;
+
+
+    public bool isLookedAt = false;
+    private bool hasBeenLookedAt;
+    private bool isFleeingFromCower = false;
 
     void Start()
     {
@@ -50,12 +55,14 @@ public class NonHostile : MonoBehaviour
             }
         }
 
-        if(isFleeing)
+        if(isLookedAt)
         {
-            if(nma.isStopped)
-            {
-                this.gameObject.SetActive(false);
-            }
+            Cower();
+        }
+        else if(!isLookedAt && !isFleeingFromCower && hasBeenLookedAt)
+        {
+            isFleeingFromCower = true;
+            StartCoroutine(FleeAfterCower());
         }
     }
 
@@ -79,12 +86,10 @@ public class NonHostile : MonoBehaviour
         Vector3 closestExit = FindClosestExit();
         nma.SetDestination(closestExit);
         nma.speed = 10f;
-        isFleeing = true;
     }
 
     private Vector3 FindClosestExit()
     {
-
         //Find closest exit in array
         float closestDistance = Mathf.Infinity;
         Vector3 closestExit = Vector3.zero;
@@ -105,9 +110,28 @@ public class NonHostile : MonoBehaviour
     public void StopAndMoveToClosestExit()
     {
         //Stop everything it's doing, and find a suitable exit
+        isFleeing = true;
         isWandering = false;
         isPathing = false;
         nma.ResetPath();
         MoveToClosestExit();
+    }
+
+    void Cower()
+    {
+        //Stop moving because player is pointing weapon at them
+        isWandering = false;
+        isPathing = false;
+        isFleeing = false;
+        isFleeingFromCower = false;
+        nma.ResetPath();
+        hasBeenLookedAt = true;
+    }
+
+    IEnumerator FleeAfterCower()
+    {
+        //Wait until player isn't looking so they may flee
+        yield return new WaitForSeconds(Random.Range(3f, 5f));
+        StopAndMoveToClosestExit();
     }
 }

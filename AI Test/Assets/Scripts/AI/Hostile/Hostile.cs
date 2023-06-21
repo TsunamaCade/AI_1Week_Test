@@ -23,6 +23,11 @@ public class Hostile : MonoBehaviour
     [SerializeField] private GameObject weapon;
     [SerializeField] private float bulletSpread;
     [SerializeField] private float bulletRange;
+
+    [SerializeField] private bool canAttack;
+    [SerializeField] private bool isAttacking;
+    [SerializeField] private bool hasAttacked;
+
     
 
     public bool isInView;
@@ -40,6 +45,11 @@ public class Hostile : MonoBehaviour
         else
         {
             Wander();
+        }
+
+        if(playerGun.gameObject.activeSelf == true)
+        {
+            weapon.SetActive(true);
         }
     }
 
@@ -80,11 +90,14 @@ public class Hostile : MonoBehaviour
 
     void Attack()
     {
+        Vector3 direct = player.position - transform.position;
+        transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, direct, 2 * Time.deltaTime, 0f));
         //Move in range of player and fire gun
         nma.SetDestination(player.position);
-        weapon.SetActive(true);
         if(nma.remainingDistance <= nma.stoppingDistance)
-        { 
+        {
+            canAttack = false;
+            isAttacking = true;
             Vector3 dir = player.position - transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             Vector3 rotation = lookRotation.eulerAngles;
@@ -105,6 +118,16 @@ public class Hostile : MonoBehaviour
                 hit.transform.GetComponent<TakeDamage>().health -= 1f;
             }
         }
+        isAttacking = false;
+        StartCoroutine(AttackAgain());
+    }
+
+    IEnumerator AttackAgain()
+    {
+        Vector3 dir = player.position - transform.position;
+        transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, dir, 2 * Time.deltaTime, 0f));
+        yield return new WaitForSeconds(2f);
+        canAttack = true;
     }
 
     void Wander()

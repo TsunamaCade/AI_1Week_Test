@@ -11,6 +11,8 @@ public class ShootGun : MonoBehaviour
 
     [SerializeField] private GameObject[] nonHostiles;
 
+    [SerializeField] private GameObject hitObject;
+
     void Update()
     {
         nonHostiles = GameObject.FindGameObjectsWithTag("NonHostile");
@@ -19,10 +21,18 @@ public class ShootGun : MonoBehaviour
         {
             if(hit.transform != null)
             {
-                //Run away when looked at
+                //Stop and cower when player is looking at them
                 if(hit.transform.CompareTag("NonHostile"))
                 {
-                    hit.transform.GetComponent<NonHostile>().StopAndMoveToClosestExit();
+                    hitObject = hit.transform.gameObject;
+                    hit.transform.GetComponent<NonHostile>().isLookedAt = true;
+                }
+                else
+                {
+                    if((hitObject != null) && (hitObject.transform.GetComponent<NonHostile>() != null))
+                    {
+                        hitObject.transform.GetComponent<NonHostile>().isLookedAt = false;
+                    }
                 }
 
                 //Dodge when in LOS
@@ -35,33 +45,32 @@ public class ShootGun : MonoBehaviour
                     }
                 }
 
-                //Move AI into other position
-                if(hit.transform.CompareTag("Ally"))
-                {
-                    hit.transform.GetComponent<TeammateAI>().inWay = true;
-                }
-
                 if(Input.GetButtonDown("Fire1") && canShoot)
                 {
+                    Debug.Log("Shoot");
                     canShoot = false;
-                    
+
                     //Run away when gunfire
                     foreach(GameObject ai in nonHostiles)
                     {
-                        ai.GetComponent<NonHostile>().StopAndMoveToClosestExit();
+                        if(!ai.GetComponent<NonHostile>().isFleeing && !ai.GetComponent<NonHostile>().isLookedAt)
+                        {
+                            ai.GetComponent<NonHostile>().StopAndMoveToClosestExit();
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                     
                     //Take health away from target
                     if(hit.transform.GetComponent<TakeDamage>() != null)
                     {
+                        Debug.Log("Take Health");
                         hit.transform.GetComponent<TakeDamage>().health -= 1f;
                     }
 
                     StartCoroutine(FireAgain());
-                }
-                else
-                {
-                    return;
                 }
             }
         }
